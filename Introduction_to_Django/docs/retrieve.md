@@ -1,7 +1,9 @@
-# Retrieve the Book Instance by title
-book = Book.objects.get(title="1984")
+# Retrieving a Book Instance
 
-# Print the book details
+### Command:
+from bookshelf.models import Book
+
+book = Book.objects.get(title="1984")
 print(f"Title: {book.title}, Author: {book.author}, Year: {book.publication_year}")
 
 # Expected Output:
