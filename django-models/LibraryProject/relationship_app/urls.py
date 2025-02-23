@@ -16,5 +16,7 @@ urlpatterns = [
     path('admin-view/', views.admin_view, name='admin_view'),  # ✅ Admin view URL
     path('librarian-view/', views.librarian_view, name='librarian_view'),  # ✅ Librarian view URL
     path('member-view/', views.member_view, name='member_view'),  # ✅ Member view URL
-
+    path('books/add/', views.add_book, name='add_book'),  # ✅ Add Book URL
+    path('books/edit/<int:book_id>/', views.edit_book, name='edit_book'),  # ✅ Edit Book URL
+    path('books/delete/<int:book_id>/', views.delete_book, name='delete_book'),  # ✅ Delete Book URL
 ]
