@@ -13,4 +13,8 @@ urlpatterns = [
     path('register/', views.register, name='register'),  # ✅ Fix: "views.register" required
     path('login/', LoginView.as_view(template_name='relationship_app/login.html'), name='login'),  # ✅ Fix: "LoginView.as_view(template_name="
     path('logout/', LogoutView.as_view(template_name='relationship_app/logout.html'), name='logout'), 
+    path('admin-view/', views.admin_view, name='admin_view'),  # ✅ Admin view URL
+    path('librarian-view/', views.librarian_view, name='librarian_view'),  # ✅ Librarian view URL
+    path('member-view/', views.member_view, name='member_view'),  # ✅ Member view URL
+
 ]
