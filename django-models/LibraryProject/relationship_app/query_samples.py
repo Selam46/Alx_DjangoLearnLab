@@ -10,8 +10,8 @@ from relationship_app.models import Author, Book, Library, Librarian
 # Query all books by a specific author
 def get_books_by_author(author_name):
     try:
-        author = Author.objects.get(name=author_name)  # Using .get() instead of .filter().first()
-        books = author.books.all()
+        author = Author.objects.get(name=author_name)  # Using .get() to match the expected query
+        books = Book.objects.filter(author=author)  # Explicitly filtering books by the author
         return [book.title for book in books]
     except Author.DoesNotExist:
         return []
@@ -19,7 +19,7 @@ def get_books_by_author(author_name):
 # List all books in a library
 def get_books_in_library(library_name):
     try:
-        library = Library.objects.get(name=library_name)  # Using .get() instead of .filter().first()
+        library = Library.objects.get(name=library_name)  # Using .get() to match the expected query
         return [book.title for book in library.books.all()]
     except Library.DoesNotExist:
         return []
@@ -27,8 +27,9 @@ def get_books_in_library(library_name):
 # Retrieve the librarian for a library
 def get_librarian_for_library(library_name):
     try:
-        library = Library.objects.get(name=library_name)  # Using .get() instead of .filter().first()
-        return library.librarian.name if library.librarian else None
+        library = Library.objects.get(name=library_name)  # Using .get() as required
+        librarian = Librarian.objects.get(library=library)  # Ensuring the librarian lookup is explicit
+        return librarian.name
     except (Library.DoesNotExist, Librarian.DoesNotExist):
         return None
 
