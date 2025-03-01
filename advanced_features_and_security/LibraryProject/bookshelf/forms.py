@@ -1,13 +1,8 @@
 from django import forms
-from .models import Book
+from .models import Post, Book
 
-class BookForm(forms.ModelForm):
+# ExampleForm for creating or updating posts
+class ExampleForm(forms.ModelForm):
     class Meta:
-        model = Book
-        fields = ['title', 'author', 'description']
-
-    def clean_title(self):
-        title = self.cleaned_data['title']
-        if not title:
-            raise forms.ValidationError("This field is required.")
-        return title
+        model = Post  # Or Book if you're working with books
+        fields = ['title', 'content']  # Specify the fields you want in the form
