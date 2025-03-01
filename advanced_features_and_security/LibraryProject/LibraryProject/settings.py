@@ -146,3 +146,4 @@ SECURE_REFERRER_POLICY = 'same-origin'  # Prevents referrer data from being sent
 CSP_DEFAULT_SRC = ("'self'",)  # Only allow content from the same origin
 CSP_SCRIPT_SRC = ("'self'", "'unsafe-inline'",)  # Allow inline scripts (be cautious)
 CSP_STYLE_SRC = ("'self'", "'unsafe-inline'",)  # Allow inline styles (be cautious)
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
