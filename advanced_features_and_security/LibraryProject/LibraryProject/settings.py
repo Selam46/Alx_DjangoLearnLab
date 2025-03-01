@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-++eeyh_#w=rc7hm4$9!u#xu@whz6)jaqz8%jb5c@9bln*7a(s7'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = []
 
@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'bookshelf',
     'relationship_app',
+    'csp',
 ]
 
 MIDDLEWARE = [
@@ -49,6 +50,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'csp.middleware.CSPMiddleware'
 ]
 
 ROOT_URLCONF = 'LibraryProject.urls'
@@ -129,3 +131,16 @@ LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/login/'  # Redirect to login page after logout
 
 AUTH_USER_MODEL = 'bookshelf.CustomUser'
+
+SECURE_BROWSER_XSS_FILTER = True
+X_FRAME_OPTIONS = 'DENY'  # Protects against clickjacking
+SECURE_CONTENT_TYPE_NOSNIFF = True  # Ensures browsers won't sniff content types
+
+CSRF_COOKIE_SECURE = True  # Ensure CSRF cookie is only sent over HTTPS
+SESSION_COOKIE_SECURE = True  # Ensure session cookie is only sent over HTTPS
+SECURE_SSL_REDIRECT = True
+SECURE_HSTS_SECONDS = 31536000  # One year
+SECURE_REFERRER_POLICY = 'same-origin'  # Prevents referrer data from being sent cross-origin
+CSP_DEFAULT_SRC = ("'self'",)  # Only allow content from the same origin
+CSP_SCRIPT_SRC = ("'self'", "'unsafe-inline'",)  # Allow inline scripts (be cautious)
+CSP_STYLE_SRC = ("'self'", "'unsafe-inline'",)  # Allow inline styles (be cautious)
