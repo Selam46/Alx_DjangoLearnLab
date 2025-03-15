@@ -8,6 +8,7 @@ class BookSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def validate_publication_year(self, value):
+        """Ensure publication year is not in the future."""
         current_year = datetime.now().year
         if value > current_year:
             raise serializers.ValidationError("Publication year cannot be in the future.")
