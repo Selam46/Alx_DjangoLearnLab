@@ -1,27 +1,26 @@
-from rest_framework import generics, permissions
+from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly  
 from .models import Book
 from .serializers import BookSerializer
 
-# Allow unauthenticated users to view books
 class BookListView(generics.ListAPIView):
     """
     API view to retrieve list of books.
-    Accessible to everyone.
+    Accessible to everyone (read-only).
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [permissions.AllowAny]  # Explicitly allow all users
+    permission_classes = [IsAuthenticatedOrReadOnly]  
 
 class BookDetailView(generics.RetrieveAPIView):
     """
     API view to retrieve a single book by ID.
-    Accessible to everyone.
+    Accessible to everyone (read-only).
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [permissions.AllowAny]  # Explicitly allow all users
+    permission_classes = [IsAuthenticatedOrReadOnly] 
 
-# Restrict modification actions to authenticated users
 class BookCreateView(generics.CreateAPIView):
     """
     API view to create a new book.
@@ -29,7 +28,7 @@ class BookCreateView(generics.CreateAPIView):
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [permissions.IsAuthenticated]  # Only authenticated users
+    permission_classes = [IsAuthenticated]  
 
 class BookUpdateView(generics.UpdateAPIView):
     """
@@ -38,7 +37,7 @@ class BookUpdateView(generics.UpdateAPIView):
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [permissions.IsAuthenticated]  # Only authenticated users
+    permission_classes = [IsAuthenticated]  
 
 class BookDeleteView(generics.DestroyAPIView):
     """
@@ -47,4 +46,4 @@ class BookDeleteView(generics.DestroyAPIView):
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [permissions.IsAuthenticated]  # Only authenticated users
+    permission_classes = [IsAuthenticated]
