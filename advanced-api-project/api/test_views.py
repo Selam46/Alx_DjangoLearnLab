@@ -1,4 +1,5 @@
 from django.test import TestCase
+from django.contrib.auth.models import User
 from rest_framework.test import APIClient
 from rest_framework import status
 from .models import Author, Book
@@ -6,13 +7,19 @@ from .models import Author, Book
 class BookAPITestCase(TestCase):
     """Test CRUD operations for the Book model endpoints"""
 
+    @classmethod
+    def setUpTestData(cls):
+        """Set up test data in a separate test database"""
+        cls.user = User.objects.create_user(username="testuser", password="testpassword")
+        cls.author = Author.objects.create(name="J.K. Rowling")
+        cls.book_data = {"title": "Harry Potter", "publication_year": 1997, "author": cls.author}
+        cls.book = Book.objects.create(**cls.book_data)
+
     def setUp(self):
-        """Set up test data"""
+        """Set up test client and authenticate user"""
         self.client = APIClient()
-        self.author = Author.objects.create(name="J.K. Rowling")
-        self.book_data = {"title": "Harry Potter", "publication_year": 1997, "author": self.author.id}
-        self.book = Book.objects.create(**self.book_data)
-    
+        self.client.login(username="testuser", password="testpassword")  # ✅ Ensures authentication
+
     def test_create_book(self):
         """Test creating a book"""
         new_book = {"title": "The Hobbit", "publication_year": 1937, "author": self.author.id}
@@ -24,7 +31,7 @@ class BookAPITestCase(TestCase):
         """Test retrieving a list of books"""
         response = self.client.get("/api/books/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertGreaterEqual(len(response.data), 1)  # At least 1 book should be present
+        self.assertGreaterEqual(len(response.data), 1)
 
     def test_get_book_detail(self):
         """Test retrieving a book by ID"""
@@ -49,7 +56,7 @@ class BookAPITestCase(TestCase):
         """Test searching for a book"""
         response = self.client.get("/api/books/?search=Harry")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertGreaterEqual(len(response.data), 1)  # At least one book should match
+        self.assertGreaterEqual(len(response.data), 1)
 
     def test_filter_books_by_year(self):
         """Test filtering books by publication year"""
