@@ -21,3 +21,9 @@
 
 ---
 
+# ✅ Unit Testing Django REST Framework APIs
+
+## 📌 Running the Tests
+To run all tests:
+```bash
+python manage.py test api
