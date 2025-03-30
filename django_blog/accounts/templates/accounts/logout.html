@@ -1,8 +1,16 @@
-{% extends 'base.html' %}
-
-{% block content %}
-<h2>Logout</h2>
-<p>You have been logged out successfully.</p>
-<a href="{% url 'login' %}">Login again</a>
-<a href="{% url 'register' %}">Sign Up</a>
-{% endblock %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logout</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <h2>Logout</h2>
+    <p>You have been logged out successfully.</p>
+    <a href="{% url 'login' %}">Login again</a>
+    <a href="{% url 'register' %}">Sign Up</a>
+</body>
+</html>
