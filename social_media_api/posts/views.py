@@ -7,10 +7,11 @@ from rest_framework.pagination import PageNumberPagination
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import Post, Comment, Like
 from .serializers import PostSerializer, CommentSerializer, LikeSerializer
-from notifications.models import Notification  # Import Notification model
+from notifications.models import Notification  
+from notifications.utils import create_notification
 
 class PostPagination(PageNumberPagination):
-    page_size = 5  # Adjust based on requirements
+    page_size = 5  
     page_size_query_param = 'page_size'
     max_page_size = 50
 
@@ -39,19 +40,14 @@ class LikePostView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, pk):
-        post = get_object_or_404(Post, pk=pk)  # Use generics.get_object_or_404
+        post = get_object_or_404(Post, pk=pk)
+
         like, created = Like.objects.get_or_create(user=request.user, post=post)
 
         if not created:
             return Response({"message": "You already liked this post"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Send a notification to the post author
-        Notification.objects.create(
-            recipient=post.author,  # Post author is the recipient
-            actor=request.user,  # Request user is the actor
-            verb="liked",  # The action verb
-            target=post  # The target object is the post
-        )
+        create_notification(post.author, request.user, "liked", post)
 
         return Response({"message": "Post liked successfully"}, status=status.HTTP_201_CREATED)
 
@@ -59,7 +55,8 @@ class UnlikePostView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, pk):
-        post = get_object_or_404(Post, pk=pk)  # Use generics.get_object_or_404
+        post = get_object_or_404(Post, pk=pk)
+
         like = Like.objects.filter(user=request.user, post=post)
 
         if like.exists():
