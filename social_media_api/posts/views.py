@@ -5,9 +5,9 @@ from rest_framework.response import Response
 from django.contrib.auth import get_user_model
 from rest_framework.pagination import PageNumberPagination
 from django_filters.rest_framework import DjangoFilterBackend
-from .models import Post, Comment, Post, Like
+from .models import Post, Comment, Like
 from .serializers import PostSerializer, CommentSerializer, LikeSerializer
-from notifications.utils import create_notification
+from notifications.models import Notification  # Import Notification model
 
 class PostPagination(PageNumberPagination):
     page_size = 5  # Adjust based on requirements
@@ -26,16 +26,6 @@ class PostViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
-class CommentViewSet(viewsets.ModelViewSet):
-    queryset = Comment.objects.all().order_by('-created_at')
-    serializer_class = CommentSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-
-    def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
-
-User = get_user_model()
-
 class UserFeedView(generics.ListAPIView):
     serializer_class = PostSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -49,14 +39,19 @@ class LikePostView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, pk):
-        post = get_object_or_404(Post, pk=pk)
+        post = get_object_or_404(Post, pk=pk)  # Use generics.get_object_or_404
         like, created = Like.objects.get_or_create(user=request.user, post=post)
 
         if not created:
             return Response({"message": "You already liked this post"}, status=status.HTTP_400_BAD_REQUEST)
 
         # Send a notification to the post author
-        create_notification(post.author, request.user, "liked", post)
+        Notification.objects.create(
+            recipient=post.author,  # Post author is the recipient
+            actor=request.user,  # Request user is the actor
+            verb="liked",  # The action verb
+            target=post  # The target object is the post
+        )
 
         return Response({"message": "Post liked successfully"}, status=status.HTTP_201_CREATED)
 
@@ -64,7 +59,7 @@ class UnlikePostView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, pk):
-        post = get_object_or_404(Post, pk=pk)
+        post = get_object_or_404(Post, pk=pk)  # Use generics.get_object_or_404
         like = Like.objects.filter(user=request.user, post=post)
 
         if like.exists():
