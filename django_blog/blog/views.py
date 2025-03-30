@@ -8,6 +8,7 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from django.urls import reverse_lazy
 from .models import Post, Comment
 from .forms import PostForm, CommentForm
+from django.db.models import Q
 
 def register_view(request):
     if request.method == "POST":
@@ -117,3 +118,14 @@ def CommentDeleteView(request, comment_id):
         comment.delete()
         return redirect('post_detail', pk=post_id)
     return render(request, 'blog/delete_comment.html', {'comment': comment})
+
+def search_posts(request):
+    query = request.GET.get('q')
+    results = Post.objects.none()
+
+    if query:
+        results = Post.objects.filter(
+            Q(title__icontains=query) | Q(content__icontains=query) | Q(tags__name__icontains=query)
+        ).distinct()
+
+    return render(request, 'blog/search_results.html', {'results': results, 'query': query})
