@@ -20,14 +20,6 @@ class PostForm(forms.ModelForm):
             'tags': TagWidget(attrs={'class': 'form-control', 'placeholder': 'Add tags (comma-separated)'})
         }
 
-    def save(self, commit=True):
-        post = super().save(commit=False)
-        tag_list = self.cleaned_data['tags'].split(',')
-        if commit:
-            post.save()
-            post.tags.set(tag_list)  
-        return post
-
 class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
