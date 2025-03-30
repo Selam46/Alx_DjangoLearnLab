@@ -7,7 +7,7 @@ from rest_framework import generics, permissions, status
 from .serializers import RegisterSerializer, UserSerializer
 from django.contrib.auth import get_user_model
 
-User = get_user_model()
+CustomUser = get_user_model()
 
 class RegisterView(APIView):
     permission_classes = [AllowAny]
@@ -39,15 +39,14 @@ class ProfileView(APIView):
         serializer = UserSerializer(user)
         return Response(serializer.data)
 
-
 class FollowUserView(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
-    queryset = User.objects.all()  
+    queryset = CustomUser.objects.all()
 
     def post(self, request, user_id):
         try:
             user_to_follow = self.get_queryset().get(id=user_id)
-        except User.DoesNotExist:
+        except CustomUser.DoesNotExist:
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
         if request.user == user_to_follow:
@@ -58,12 +57,12 @@ class FollowUserView(generics.GenericAPIView):
 
 class UnfollowUserView(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
-    queryset = User.objects.all()  
+    queryset = CustomUser.objects.all()
 
     def post(self, request, user_id):
         try:
             user_to_unfollow = self.get_queryset().get(id=user_id)
-        except User.DoesNotExist:
+        except CustomUser.DoesNotExist:
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
         if request.user == user_to_unfollow:
